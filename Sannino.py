@@ -1,16 +1,28 @@
-from qiskit.circuit import QuantumCircuit, QuantumRegister, ClassicalRegister
- 
-qubits = QuantumRegister(1)
-clbits = ClassicalRegister(1)
-circuit = QuantumCircuit(qubits, clbits)
-(q0,) = qubits
-(c0,) = clbits
- 
-circuit.h(q0)
-circuit.measure(q0, c0)
-with circuit.if_test((c0, 1)):
-    circuit.x(q0)
-circuit.measure(q0, c0)
-circuit.draw("mpl")
- 
-# example output counts: {'0': 1024}
+from qiskit import QuantumCircuit, transpile
+from qiskit_aer import AerSimulator
+from qiskit.visualization import plot_histogram
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+# Crea il circuito
+qc = QuantumCircuit(2, 2)
+qc.h(0)
+qc.cx(0, 1)
+qc.measure([0, 1], [0, 1])
+
+
+# Simulatore
+simulator = AerSimulator()
+
+# Transpile per il simulatore
+compiled = transpile(qc, simulator)
+
+# Esegui la simulazione
+job = simulator.run(compiled, shots=1024)
+result = job.result()
+
+# Risultati
+qc.draw('mpl')
+counts = result.get_counts()
+plot_histogram(counts)
+plt.show()
