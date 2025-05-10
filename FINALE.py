@@ -61,22 +61,32 @@ print(nk)
 for k in range(len(cores)):
     # reshape & SVD 
     j, i, n_k = cores[k].shape
-    
+    lk=np.log2(nk[k])
+
+    print("run :",k)
+    print("nk",nk[k])
+    print("lk",lk)
+
+
+    print("core prima",cores[k].shape)
     cores[k] = np.reshape(cores[k], (j * i, n_k))
 
-    #print(cores[k].shape)
+    print("core dopo",cores[k].shape)
     U, S, V = np.linalg.svd(cores[k])
+    print("SVD")
+    print("U : ",U.shape)
+    print("S Array : ", S.shape)
+    print("V : ", V.shape)
+
     S_prime = np.zeros_like(cores[k])
     for i in range(len(S)):
         S_prime[i,i] = S[i]
 
     R = S_prime @ V
-    print("run :",k)
-    print("nk",nk[k])
-    lk=np.log2(nk[k])
-    print("lk",lk)
+    
+    
     print("R prima",R.shape)
-    tronc = (min(2**(min(k,np.log2(nk[k-1])+1)),2**lk))
+    tronc = min(2**(min(k,np.log2(nk[k-1])+1)),2**lk)
     R = R[:tronc, :]
     
     print("S forma:",S_prime.shape)
