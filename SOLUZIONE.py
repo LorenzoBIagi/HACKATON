@@ -3,9 +3,9 @@ import tntorch as tn
 import torch
 
 #Dati 1D
-num_dimensions = 1
-mu = np.array(0.10)   # Mean vector
-cov_matrix = np.array(0.20)  # Covariance matrix 
+num_dimensions  = 1
+mu              = np.array([0.10])       # shape (1,)
+cov_matrix      = np.array([[0.20]])     # shape (1,1) 
 
 bond_dimension = 8
 qubits = 10
@@ -21,8 +21,9 @@ def function(x,mu,cov):
     return 1/((2*np.pi)**(n/2) *determinant) * np.exp(-0.5 * (x-mu).T @ np.linalg.inv(cov) @ (x-mu))
 
 domain_np = [np.linspace(mu[d] - 3*np.sqrt(cov[d,d]), mu[d] + 3*np.sqrt(cov[d,d]), grid_size) for d in range(num_dimensions)]
-    
+domain = [torch.tensor(d, dtype=torch.float32) for d in domain_np]
+   
 
-t = tn.cross(function=function, domain=domain_np, max_rank=bond_dimension)
+t = tn.cross(function=function, domain=domain)
 print(t)
 
