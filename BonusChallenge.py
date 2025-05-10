@@ -1,6 +1,6 @@
 # CAMBIA QUESTE DUE RIGHE:
 # from qiskit.primitives import StatevectorSampler as Sampler  # VECCHIO
-from qiskit.primitives import Sampler  # <-- NUOVA IMPORT
+from qiskit_aer.primitives import Sampler  # <-- NUOVA IMPORT
 
 # Resto del codice invariato
 import torch
