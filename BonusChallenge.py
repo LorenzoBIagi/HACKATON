@@ -7,6 +7,8 @@ from matplotlib import cm
 from qiskit import QuantumCircuit
 from qiskit.circuit.library import EfficientSU2
 
+%matplotlib inline
+
 algorithm_globals.random_seed = 123456
 _ = torch.manual_seed(123456)  # suppress output
 
