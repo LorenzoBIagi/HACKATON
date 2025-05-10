@@ -124,7 +124,7 @@ qc = QuantumCircuit(n_qubits, n_qubits)
 
 
 for gate in gates:
-    #print(gate[0].shape)
+    print(gate[0])
     qc.append(UnitaryGate(gate[0]), gate[1][::-1])
 
 

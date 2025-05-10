@@ -1,5 +1,5 @@
 import torch
-from qiskit_machine_learning.utils import algorithm_globals
+
 import numpy as np
 from scipy.stats import multivariate_normal
 import matplotlib.pyplot as plt
@@ -14,11 +14,15 @@ from torch.optim import Adam
 from IPython.display import clear_output
 import time
 from scipy.stats import multivariate_normal, entropy
-
-
-
+from qiskit.utils import algorithm_globals
 
 algorithm_globals.random_seed = 123456
+
+
+
+
+
+
 _ = torch.manual_seed(123456)  # suppress output
 
 num_dim = 2
