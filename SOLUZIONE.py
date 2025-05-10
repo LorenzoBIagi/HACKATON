@@ -15,7 +15,7 @@ def make_psd(cov):
     # 2. Autovalori e autovettori
     eigvals, eigvecs = np.linalg.eigh(cov_sym)
 
-    # 3. Azzeramento degli autovalori negativi
+    # 3. Azzeramento degli autovalori negativi 
     eigvals_clipped = np.clip(eigvals, a_min=1e-6, a_max=None)  # imposta min=1e-6 per evitare problemi numerici
 
     # 4. Ricostruzione matrice PSD
