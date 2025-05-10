@@ -11,10 +11,14 @@ cov_matrix = np.array([[0.20, 0.35],[ 0.16, 0.07]])  # Covariance matrix
 def generate_tt_pdf(mu, cov, num_qubits_per_dim=10, max_tt_rank=8):
     n_dims = len(mu)
     grid_size = 2 ** num_qubits_per_dim
+    #symmtrizziamo la matrice di covarianza
+    cov = 0.5 * (cov + cov.T)
 
     # Griglia in ogni dimensione (intervallo centrato attorno a mu)
     domain_np = [np.linspace(mu[d] - 3*np.sqrt(cov[d,d]), mu[d] + 3*np.sqrt(cov[d,d]), grid_size) for d in range(n_dims)]
     domain = [torch.tensor(d, dtype=torch.float32) for d in domain_np]
+
+    
 
     # Oggetto scipy multivariate normal
     dist = multivariate_normal(mean=mu, cov=cov)
