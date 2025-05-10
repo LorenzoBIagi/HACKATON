@@ -5,7 +5,7 @@ from scipy.stats import multivariate_normal
 
 num_dimensions = 2
 mu = np.array([0.10, 0.10])  # Mean vector
-cov_matrix = np.array([[0.20, 0.35],[ 0.16, 0.07]])  # Covariance matrix 
+cov_matrix = np.array([[0.20, 0.01], [0.01, 0.07]])  # Covariance matrix 
 
 def make_psd(cov):
     # 1. Simmetrizza
@@ -22,7 +22,7 @@ def make_psd(cov):
     return cov_psd
 
 
-def generate_tt_pdf(mu, cov, num_qubits_per_dim=10, max_tt_rank=20):
+def generate_tt_pdf(mu, cov, num_qubits_per_dim=10, max_tt_rank=8):
     n_dims = len(mu)
     grid_size = 2 ** num_qubits_per_dim
     #symmtrizziamo la matrice di covarianza
