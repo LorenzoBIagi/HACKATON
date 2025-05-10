@@ -1,6 +1,6 @@
 # CAMBIA QUESTE DUE RIGHE:
 # from qiskit.primitives import StatevectorSampler as Sampler  # VECCHIO
-from qiskit_aer.primitives import Sampler  # <-- NUOVA IMPORT
+#from qiskit_aer.primitives import Sampler  # <-- NUOVA IMPORT
 
 # Resto del codice invariato
 import torch
@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from qiskit import QuantumCircuit
 from qiskit.circuit.library import EfficientSU2
+from qiskit.primitives import StatevectorSampler as Sampler
 from qiskit_machine_learning.connectors import TorchConnector
 from qiskit_machine_learning.neural_networks import SamplerQNN
 from torch import nn
@@ -18,6 +19,8 @@ from torch.optim import Adam
 from IPython.display import clear_output
 import time
 from scipy.stats import multivariate_normal, entropy
+
+
 algorithm_globals.random_seed = 123456
 
 
