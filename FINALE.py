@@ -18,7 +18,7 @@ cov_matrix = 0.20  # Covariance matrix
 
 #PARAMETRI DISCRETIZZAZIOINE
 
-d = 10                 # qubit
+d = 5                 # qubit
 m = 2**d               # dimensioni discretizzazione
 
 #GAUSSIANA DISCRETA
@@ -90,7 +90,7 @@ for idx, (U_list, qubits) in enumerate(W):
 
 #PARAMETRI CIRCUITO
 
-n_qubits = 10
+n_qubits = 5
 W = W[::-1]
 gates =W
 
@@ -101,7 +101,7 @@ qc = QuantumCircuit(n_qubits, n_qubits)
 
 for gate in gates:
     #print(gate[0].shape)
-    qc.append(UnitaryGate(gate[0]), gate[1])
+    qc.append(UnitaryGate(gate[0]), gate[1][::-1])
 
 
 qc.measure_all()
@@ -114,7 +114,7 @@ simulator = AerSimulator()
 compiled = transpile(qc, simulator)
 
 # Esegui la simulazione
-job = simulator.run(compiled, shots=4024)
+job = simulator.run(compiled, shots=7024)
 result = job.result()
 
 # Risultati
