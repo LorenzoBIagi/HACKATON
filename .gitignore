@@ -1,3 +1,6 @@
 # Virtual env
 .venv/
+# Ignora la .git della sottocartella “external/”
+external/.git/
+external/.gitmodules
 
