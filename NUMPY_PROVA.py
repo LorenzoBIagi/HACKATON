@@ -37,5 +37,15 @@ TTrain = tn.cross(
 )
 
 
+
 print(TTrain)
-print(A[0,0,1,1])  
+
+
+cores_torch = TTrain.cores
+cores_numpy = [c.cpu().numpy() for c in cores_torch]
+
+print(len(cores_numpy))
+print(cores_numpy[0])
+print(cores_numpy[2].shape)
+
+    
