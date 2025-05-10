@@ -17,6 +17,5 @@ tt = tn.cross(
     verbose=True
 )
 
-print("TT cores:", len(tt.cores))
-print("Shapes:", [core.shape for core in tt.cores])
+
 print(tt)
