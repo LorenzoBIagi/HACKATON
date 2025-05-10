@@ -67,25 +67,33 @@ for k in range(len(cores)):
     #print(cores[k].shape)
     U, S, V = np.linalg.svd(cores[k])
     S_prime = np.zeros_like(cores[k])
+    for i in range(len(S)):
+        S_prime[i,i] = S[i]
+
+    R = S_prime @ V
+    print("run :",k)
+    print("R prima",R.shape)
+    tronc = min(2**k,n_k)
+    R = R[:tronc, :]
     
-    #print(S_prime.shape)
-    R = np.diag(S) @ V
+    print("S forma:",S_prime.shape)
+    print("R forma dopo",R.shape)
+
     if k != len(cores) - 1:
-        cores[k+1] = np.einsum('j r,r i k->j i k', R, cores[k+1])
+        cores[k+1] = np.tensordot(R, cores[k+1],axes=([-1], [0]))
 
     # calcolo dei qubit coinvolti
     start = k + 1
     mn    = min(start, int(np.log2(nk[k])))
     diff  = int(start - mn)
     qubits = list(range(diff-1, start))
-    print(U.shape)
+    print("Unitario",U.shape)
     U_list = U.tolist()
     W.append([U_list, qubits])
 
 # Stampa di controllo
 for idx, (U_list, qubits) in enumerate(W):
     print(f"Unitary {idx}: acts on qubits {qubits}, matrix with dimension {len(U_list)}")
-
 
 
 #PARAMETRI CIRCUITO
