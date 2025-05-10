@@ -45,7 +45,7 @@ def generate_tt_pdf(mu, cov, num_qubits_per_dim=10, max_tt_rank=8):
         return torch.tensor(pdf_vals, dtype=torch.float32)
 
     # Approssimazione con TT-cross con rango massimo specificato
-    tt_tensor = tn.cross(function=pdf_function, domain=domain, ranks_tt=max_tt_rank)
+    tt_tensor = tn.cross(function=pdf_function, domain=domain, rmax=max_tt_rank)
     
     return tt_tensor
 
