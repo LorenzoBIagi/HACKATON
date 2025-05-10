@@ -62,7 +62,7 @@ for k in range(len(cores)):
     # reshape & SVD 
     j, i, n_k = cores[k].shape
     
-    cores[k] = np.reshape(cores[k], (j * i, nk[k]))
+    cores[k] = np.reshape(cores[k], (j * i, n_k))
 
     #print(cores[k].shape)
     U, S, V = np.linalg.svd(cores[k])
@@ -81,6 +81,7 @@ for k in range(len(cores)):
     
     print("S forma:",S_prime.shape)
     print("R forma dopo",R.shape)
+    print("Unitario",U.shape)
 
     if k != len(cores) - 1:
         cores[k+1] = np.tensordot(R, cores[k+1],axes=([-1], [0]))
@@ -90,7 +91,7 @@ for k in range(len(cores)):
     mn    = min(start, int(np.log2(nk[k])))
     diff  = int(start - mn)
     qubits = list(range(diff-1, start))
-    print("Unitario",U.shape)
+    
     U_list = U.tolist()
     W.append([U_list, qubits])
 
