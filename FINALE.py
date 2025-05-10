@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import tntorch as tn
 from qiskit import QuantumCircuit, transpile
-#from qiskit_aer import AerSimulator
+from qiskit_aer import AerSimulator
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
 from qiskit.circuit.library import UnitaryGate
@@ -61,30 +61,37 @@ print(nk)
 for k in range(len(cores)):
     # reshape & SVD 
     j, i, n_k = cores[k].shape
+    
     cores[k] = np.reshape(cores[k], (j * i, n_k))
+
+    #print(cores[k].shape)
     U, S, V = np.linalg.svd(cores[k])
+    S_prime = np.zeros_like(cores[k])
+    
+    #print(S_prime.shape)
     R = np.diag(S) @ V
     if k != len(cores) - 1:
         cores[k+1] = np.einsum('j r,r i k->j i k', R, cores[k+1])
 
-    # Now, we are going to compute on which qubits U acts
+    # calcolo dei qubit coinvolti
     start = k + 1
     mn    = min(start, int(np.log2(nk[k])))
     diff  = int(start - mn)
-    # qubit indices from diff up to start (inclusive)
     qubits = list(range(diff-1, start))
+    print(U.shape)
+    U_list = U.tolist()
+    W.append([U_list, qubits])
 
-    # append both U and the qubit list
-    W.append([U, qubits])
-
-for k, (U, qubits) in enumerate(W):
-    print(f"Unitary {k}: shape={U.shape}, acts on qubits {qubits}")
+# Stampa di controllo
+for idx, (U_list, qubits) in enumerate(W):
+    print(f"Unitary {idx}: acts on qubits {qubits}, matrix with dimension {len(U_list)}")
 
 
 
 #PARAMETRI CIRCUITO
 
 n_qubits = 10
+W = W[::-1]
 gates =W
 
 # Crea il circuito
@@ -93,25 +100,25 @@ qc = QuantumCircuit(n_qubits, n_qubits)
 
 
 for gate in gates:
-    print(gate[0].shape)
-    qc.append(UnitaryGate(gate[0].tolist()), gate[1])
+    #print(gate[0].shape)
+    qc.append(UnitaryGate(gate[0]), gate[1])
 
 
-#qc.measure([0, 1], [0, 1])
+qc.measure_all()
 
 
 # Simulatore
-#simulator = AerSimulator()
+simulator = AerSimulator()
 
 # Transpile per il simulatore
-#compiled = transpile(qc, simulator)
+compiled = transpile(qc, simulator)
 
 # Esegui la simulazione
-#job = simulator.run(compiled, shots=1024)
-#result = job.result()
+job = simulator.run(compiled, shots=4024)
+result = job.result()
 
 # Risultati
 qc.draw('mpl')
-#counts = result.get_counts()
-#plot_histogram(counts)
+counts = result.get_counts()
+plot_histogram(counts)
 plt.show()
