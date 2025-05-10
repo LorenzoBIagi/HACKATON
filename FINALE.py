@@ -90,7 +90,7 @@ for k in range(len(cores)):
     
     
     print("R prima",R.shape)
-    tronc = int(2**(min(k+1,np.log2(nk[k+1]))))
+    tronc = int(min(2**(min(k+1, int(np.log2(nk[k])+1))),nk[k+1]))
     R = R[:tronc, :]
     
     print("R  dopo",R.shape)
@@ -119,16 +119,15 @@ W = W[::-1]
 gates =W
 
 # Crea il circuito
-qc = QuantumCircuit(n_qubits)
+qc = QuantumCircuit(n_qubits,n_qubits)
 
 
 
 for gate in gates:
-    print(gate[0])
-    qc.append(UnitaryGate(gate[0]), gate[1][::-1])
+    qc.append(UnitaryGate(gate[0]), gate[1])
 
 
-qc.measure_all()
+qc.measure(range(n_qubits)[::-1], range(n_qubits))
 
 
 # Simulatore
@@ -138,7 +137,7 @@ simulator = AerSimulator()
 compiled = transpile(qc, simulator)
 
 # Esegui la simulazione
-job = simulator.run(compiled, shots=7024)
+job = simulator.run(compiled, shots=57024)
 result = job.result()
 
 # Risultati
@@ -147,15 +146,18 @@ counts_bin = result.get_counts()
 # Converte le chiavi binarie in decimali
 counts_dec = {int(bstr, 2): cnt for bstr, cnt in counts_bin.items()}
 
-# Ordina i risultati
-xs = sorted(counts_dec.keys())
-ys = [counts_dec[x] for x in xs]
+n = qc.num_qubits
+N = 2**n
+
+# Reconstruiamo asse X completo e vettore Y con zero quando mancante
+xs = list(range(N))
+ys = [counts_dec.get(x, 0) for x in xs]
 
 # Plotta con matplotlib “puro”
 plt.figure(figsize=(12, 4))
-plt.bar(xs, ys)
+plt.bar(xs, ys, width=1.0)
 
-# Rimuove tick e label sull’asse x (troppe etichette!)
+# Togli le tacche e le label sull’asse x
 #plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
 
 plt.ylabel('Counts')

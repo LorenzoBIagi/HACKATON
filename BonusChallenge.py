@@ -4,7 +4,7 @@
 
 # Resto del codice invariato
 import torch
-from qiskit_machine_learning.utils import algorithm_globals
+#from qiskit_machine_learning.utils import algorithm_globals
 import numpy as np
 from scipy.stats import multivariate_normal
 import matplotlib.pyplot as plt
@@ -21,7 +21,7 @@ import time
 from scipy.stats import multivariate_normal, entropy
 
 
-algorithm_globals.random_seed = 123456
+#algorithm_globals.random_seed = 123456
 
 
 
@@ -36,7 +36,7 @@ num_qubits = num_dim * int(np.log2(num_discrete_values))
 
 
 coords = np.linspace(-2, 2, num_discrete_values)
-rv = multivariate_normal(mean=[0.0, 0.0], cov=[[1, 0], [0, 1]], seed=algorithm_globals.random_seed)
+rv = multivariate_normal(mean=[0.0, 0.0], cov=[[1, 0], [0, 1]])
 grid_elements = np.transpose([np.tile(coords, len(coords)), np.repeat(coords, len(coords))])
 prob_data = rv.pdf(grid_elements)
 prob_data = prob_data / np.sum(prob_data)
@@ -70,7 +70,9 @@ def create_generator() -> TorchConnector:
         sparse=False,
     )
 
-    initial_weights = algorithm_globals.random.random(qc.num_parameters)
+    np.random.seed(42)  # Imposta il seme per risultati riproducibili
+    num_parameters = 3  # Sostituisci con qc.num_parameters
+    initial_weights = np.random.random(num_parameters)
     return TorchConnector(qnn, initial_weights)
     
 class Discriminator(nn.Module):
