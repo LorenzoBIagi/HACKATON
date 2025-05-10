@@ -124,7 +124,7 @@ qc = QuantumCircuit(n_qubits,n_qubits)
 
 
 for gate in gates:
-    qc.append(UnitaryGate(gate[0]), gate[1])
+    qc.append(UnitaryGate(gate[0]), gate[1][::-1])
 
 
 qc.measure(range(n_qubits)[::-1], range(n_qubits))
