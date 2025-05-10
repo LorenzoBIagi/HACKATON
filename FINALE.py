@@ -18,14 +18,14 @@ cov_matrix = 0.20  # Covariance matrix
 
 #PARAMETRI DISCRETIZZAZIOINE
 
-d = 5                 # qubit
+d = 10                 # qubit
 m = 2**d               # dimensioni discretizzazione
 
 #GAUSSIANA DISCRETA
 
 domain_np = np.linspace(mu - 3*np.sqrt(cov_matrix), mu + 3*np.sqrt(cov_matrix), m)
 def gaussian(x):
-    return 1/(np.sqrt(2*np.pi*cov_matrix))*np.exp(-0.5*((x-mu)**2)/np.sqrt(cov_matrix))
+    return (1/(np.sqrt(2*np.pi*cov_matrix)))*np.exp(-0.5*((x-mu)**2)/np.sqrt(cov_matrix))
 
 
 
@@ -90,7 +90,7 @@ for idx, (U_list, qubits) in enumerate(W):
 
 #PARAMETRI CIRCUITO
 
-n_qubits = 5
+n_qubits = 10
 W = W[::-1]
 gates =W
 
