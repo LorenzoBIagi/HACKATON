@@ -72,8 +72,11 @@ for k in range(len(cores)):
 
     R = S_prime @ V
     print("run :",k)
+    print("nk",nk[k])
+    lk=np.log2(nk[k])
+    print("lk",lk)
     print("R prima",R.shape)
-    tronc = min(2**k,n_k)
+    tronc = int(min(2**(min(k,np.log2(nk[k-1])+1)),2**lk))
     R = R[:tronc, :]
     
     print("S forma:",S_prime.shape)
