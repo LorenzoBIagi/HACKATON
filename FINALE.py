@@ -119,7 +119,7 @@ W = W[::-1]
 gates =W
 
 # Crea il circuito
-qc = QuantumCircuit(n_qubits, n_qubits)
+qc = QuantumCircuit(n_qubits)
 
 
 
@@ -143,6 +143,22 @@ result = job.result()
 
 # Risultati
 qc.draw('mpl')
-counts = result.get_counts()
-plot_histogram(counts)
+counts_bin = result.get_counts()
+# Converte le chiavi binarie in decimali
+counts_dec = {int(bstr, 2): cnt for bstr, cnt in counts_bin.items()}
+
+# Ordina i risultati
+xs = sorted(counts_dec.keys())
+ys = [counts_dec[x] for x in xs]
+
+# Plotta con matplotlib “puro”
+plt.figure(figsize=(12, 4))
+plt.bar(xs, ys)
+
+# Rimuove tick e label sull’asse x (troppe etichette!)
+plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+
+plt.ylabel('Counts')
+plt.xlabel('Stato (decimale)')
+plt.title('Istogramma dei risultati')
 plt.show()
