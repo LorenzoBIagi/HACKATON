@@ -56,6 +56,7 @@ W = []
 nk = []
 for k in range (len(cores)):
      nk.append(len(cores[k-1][0,0,:]))
+nk.append(1)
 print(nk)
 
 for k in range(len(cores)):
@@ -89,7 +90,7 @@ for k in range(len(cores)):
     
     
     print("R prima",R.shape)
-    tronc = 2**(min(k+1,np.log2(nk[k])))
+    tronc = int(2**(min(k+1,np.log2(nk[k+1]))))
     R = R[:tronc, :]
     
     print("R  dopo",R.shape)

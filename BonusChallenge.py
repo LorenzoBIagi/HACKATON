@@ -16,7 +16,7 @@ import time
 from scipy.stats import multivariate_normal, entropy
 
 
-%matplotlib inline
+
 
 algorithm_globals.random_seed = 123456
 _ = torch.manual_seed(123456)  # suppress output
