@@ -81,17 +81,18 @@ for k in range(len(cores)):
     S_prime = np.zeros_like(cores[k])
     for i in range(len(S)):
         S_prime[i,i] = S[i]
+    
+
+    print("S Dopo : ", S_prime.shape)
 
     R = S_prime @ V
     
     
     print("R prima",R.shape)
-    tronc = min(2**(min(k,np.log2(nk[k-1])+1)),2**lk)
+    tronc = 2**(min(k+1,np.log2(nk[k])))
     R = R[:tronc, :]
     
-    print("S forma:",S_prime.shape)
-    print("R forma dopo",R.shape)
-    print("Unitario",U.shape)
+    print("R  dopo",R.shape)
 
     if k != len(cores) - 1:
         cores[k+1] = np.tensordot(R, cores[k+1],axes=([-1], [0]))
