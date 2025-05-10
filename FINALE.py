@@ -1,0 +1,117 @@
+import numpy as np
+import torch
+import tntorch as tn
+from qiskit import QuantumCircuit, transpile
+#from qiskit_aer import AerSimulator
+from qiskit.visualization import plot_histogram
+import matplotlib.pyplot as plt
+from qiskit.circuit.library import UnitaryGate
+
+%matplotlib inline
+
+
+#PARAMETRI GAUSSIANA
+
+num_dimensions = 1
+mu = 0.10   # Mean vector
+cov_matrix = 0.20  # Covariance matrix 
+
+#PARAMETRI DISCRETIZZAZIOINE
+
+d = 10                 # qubit
+m = 2**d               # dimensioni discretizzazione
+
+#GAUSSIANA DISCRETA
+
+domain_np = np.linspace(mu - 3*np.sqrt(cov_matrix), mu + 3*np.sqrt(cov_matrix), m)
+def gaussian(x):
+    return 1/(np.sqrt(2*np.pi*cov_matrix))*np.exp(-0.5*((x-mu)**2)/np.sqrt(cov_matrix))
+
+
+
+vec =  np.array([gaussian(x) for x in domain_np])    # vettore probabilità discreta
+
+shape = (2,)*d         # (2,2,2,2)
+A = vec.reshape(shape) #tensore numpy
+T=tn.Tensor(A)      #tensore torch
+
+
+#CREAZIONE TENSOR TRAIN
+
+TTrain = tn.cross(
+    function=lambda x: x,   # identità su ciascuna fibra
+    tensors=[T],            # lista di un solo tensore               # tolleranza desiderata
+    rmax=8,                 # rank massimo ammesso
+)
+
+
+
+print(TTrain)
+
+
+cores_torch = TTrain.cores
+cores = [c.cpu().numpy() for c in cores_torch]
+
+W = []
+nk = []
+for k in range (len(cores)):
+     nk.append(len(cores[k-1][0,0,:]))
+print(nk)
+
+for k in range(len(cores)):
+    # reshape & SVD 
+    j, i, n_k = cores[k].shape
+    cores[k] = np.reshape(cores[k], (j * i, n_k))
+    U, S, V = np.linalg.svd(cores[k])
+    R = np.diag(S) @ V
+    if k != len(cores) - 1:
+        cores[k+1] = np.einsum('j r,r i k->j i k', R, cores[k+1])
+
+    # Now, we are going to compute on which qubits U acts
+    start = k + 1
+    mn    = min(start, int(np.log2(nk[k])))
+    diff  = int(start - mn)
+    # qubit indices from diff up to start (inclusive)
+    qubits = list(range(diff-1, start))
+
+    # append both U and the qubit list
+    W.append([U, qubits])
+
+for k, (U, qubits) in enumerate(W):
+    print(f"Unitary {k}: shape={U.shape}, acts on qubits {qubits}")
+
+
+
+#PARAMETRI CIRCUITO
+
+n_qubits = 10
+gates =W
+
+# Crea il circuito
+qc = QuantumCircuit(n_qubits, n_qubits)
+
+
+
+for gate in gates:
+    print(gate[0].shape)
+    qc.append(UnitaryGate(gate[0].tolist()), gate[1])
+
+
+#qc.measure([0, 1], [0, 1])
+
+
+# Simulatore
+#simulator = AerSimulator()
+
+# Transpile per il simulatore
+#compiled = transpile(qc, simulator)
+
+# Esegui la simulazione
+#job = simulator.run(compiled, shots=1024)
+#result = job.result()
+
+# Risultati
+qc.draw('mpl')
+#counts = result.get_counts()
+#plot_histogram(counts)
+plt.show()

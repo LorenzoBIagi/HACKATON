@@ -22,14 +22,14 @@ for gate in gates:
 
 
 # Simulatore
-simulator = AerSimulator()
+#simulator = AerSimulator()
 
 # Transpile per il simulatore
-compiled = transpile(qc, simulator)
+#compiled = transpile(qc, simulator)
 
 # Esegui la simulazione
-job = simulator.run(compiled, shots=1024)
-result = job.result()
+#job = simulator.run(compiled, shots=1024)
+#result = job.result()
 
 # Risultati
 qc.draw('mpl')
