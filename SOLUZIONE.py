@@ -5,7 +5,8 @@ from scipy.stats import multivariate_normal
 
 num_dimensions = 2
 mu = np.array([0.10, 0.10])  # Mean vector
-cov_matrix = np.array([[0.20, 0.35],[ 0.16, 0.07]])  # Covariance matrix 
+#cov_matrix = np.array([[0.20, 0.35],[ 0.16, 0.07]])  # Covariance matrix 
+cov_matrix = np.array([[0.02, 0.015],[ 0.015, 0.03]])  # Covariance matrix 
 
 def make_psd(cov):
     # 1. Simmetrizza
