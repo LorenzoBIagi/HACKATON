@@ -62,7 +62,7 @@ for k in range(len(cores)):
     # reshape & SVD 
     j, i, n_k = cores[k].shape
     
-    cores[k] = np.reshape(cores[k], (j * i, n_k))
+    cores[k] = np.reshape(cores[k], (j * i, nk[k]))
 
     #print(cores[k].shape)
     U, S, V = np.linalg.svd(cores[k])
