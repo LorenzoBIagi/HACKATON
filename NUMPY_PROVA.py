@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 import tntorch as tn
-from tntorch.cross import cross
 
 #PARAMETRI GAUSSIANA
 
@@ -26,7 +25,7 @@ vec =  np.array([gaussian(x) for x in domain_np])    # vettore probabilità disc
 
 shape = (2,)*d         # (2,2,2,2)
 A = vec.reshape(shape) #tensore numpy
-T=tn.tensor(A)      #tensore torch
+T=tn.Tensor(A)      #tensore torch
 
 
 #CREAZIONE TENSOR TRAIN
