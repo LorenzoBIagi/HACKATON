@@ -32,11 +32,10 @@ T=tn.Tensor(A)      #tensore torch
 
 TTrain = tn.cross(
     function=lambda x: x,   # identità su ciascuna fibra
-    tensors=[T],            # lista di un solo tensore
-    eps=1e-6,               # tolleranza desiderata
-    rmax=8,                # rank massimo ammesso
-    verbose=True
+    tensors=[T],            # lista di un solo tensore               # tolleranza desiderata
+    rmax=8,                 # rank massimo ammesso
 )
 
-print(T)
+
+print(TTrain)
 print(A[0,0,1,1])  
