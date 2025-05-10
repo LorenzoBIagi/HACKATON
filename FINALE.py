@@ -138,7 +138,7 @@ simulator = AerSimulator()
 compiled = transpile(qc, simulator)
 
 # Esegui la simulazione
-job = simulator.run(compiled, shots=57024)
+job = simulator.run(compiled, shots=7024)
 result = job.result()
 
 # Risultati
@@ -156,7 +156,7 @@ plt.figure(figsize=(12, 4))
 plt.bar(xs, ys)
 
 # Rimuove tick e label sull’asse x (troppe etichette!)
-plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+#plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
 
 plt.ylabel('Counts')
 plt.xlabel('Stato (decimale)')
