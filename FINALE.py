@@ -76,7 +76,7 @@ for k in range(len(cores)):
     lk=np.log2(nk[k])
     print("lk",lk)
     print("R prima",R.shape)
-    tronc = int(min(2**(min(k,np.log2(nk[k-1])+1)),2**lk))
+    tronc = (min(2**(min(k,np.log2(nk[k-1])+1)),2**lk))
     R = R[:tronc, :]
     
     print("S forma:",S_prime.shape)
