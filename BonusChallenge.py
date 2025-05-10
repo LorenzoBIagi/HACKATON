@@ -4,7 +4,8 @@ import numpy as np
 from scipy.stats import multivariate_normal
 import matplotlib.pyplot as plt
 from matplotlib import cm
-
+from qiskit import QuantumCircuit
+from qiskit.circuit.library import EfficientSU2
 
 algorithm_globals.random_seed = 123456
 _ = torch.manual_seed(123456)  # suppress output
@@ -28,3 +29,11 @@ prob_grid = np.reshape(prob_data, grid_shape)
 surf = ax.plot_surface(mesh_x, mesh_y, prob_grid, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 fig.colorbar(surf, shrink=0.5, aspect=5)
 plt.show()
+
+qc = QuantumCircuit(num_qubits)
+qc.h(qc.qubits)
+
+ansatz = EfficientSU2(num_qubits, reps=6)
+qc.compose(ansatz, inplace=True)
+qc.decompose().draw(output="mpl", style="clifford")
+qc.num_parameters
