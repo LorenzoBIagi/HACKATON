@@ -22,7 +22,7 @@ def gaussian(x):
 
 #DISCRETIZATION PARAMETERS
 q=10 #qubits
-d=q/num_dimensions #samples in each direction (MUST BE MULTIPLE)
+d=q//num_dimensions #samples in each direction (MUST BE MULTIPLE)
 N = 2**(2*d) 
 
 # DISCRETIZATION
