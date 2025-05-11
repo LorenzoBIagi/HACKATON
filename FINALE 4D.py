@@ -18,10 +18,10 @@ m = 2**(d/4)               # dimensioni discretizzazione
 
 
 vectroized_function = []
-for x in np.linspace(mu[0] - 3*np.sqrt(cov_matrix[0,0]), mu[0] + 3*np.sqrt(cov_matrix[0,0]), 2**d):
-    for y in np.linspace(mu[1] - 3*np.sqrt(cov_matrix[1,1]), mu[1] + 3*np.sqrt(cov_matrix[1,1]), 2**d):
-        for z in np.linspace(mu[2] - 3*np.sqrt(cov_matrix[2,2]), mu[2] + 3*np.sqrt(cov_matrix[2,2]), 2**d):
-            for w in np.linspace(mu[3] - 3*np.sqrt(cov_matrix[3,3]), mu[3] + 3*np.sqrt(cov_matrix[3,3]), 2**d):
+for x in np.linspace(mu[0] - 3*np.sqrt(cov_matrix[0,0]), mu[0] + 3*np.sqrt(cov_matrix[0,0]), 2**m):
+    for y in np.linspace(mu[1] - 3*np.sqrt(cov_matrix[1,1]), mu[1] + 3*np.sqrt(cov_matrix[1,1]), 2**m):
+        for z in np.linspace(mu[2] - 3*np.sqrt(cov_matrix[2,2]), mu[2] + 3*np.sqrt(cov_matrix[2,2]), 2**m):
+            for w in np.linspace(mu[3] - 3*np.sqrt(cov_matrix[3,3]), mu[3] + 3*np.sqrt(cov_matrix[3,3]), 2**m):
                 vectroized_function.append(gaussian(np.array([x,y,z,w])))
                 
 vectroized_function = np.array(vectroized_function) # vettore probabilità discreta
