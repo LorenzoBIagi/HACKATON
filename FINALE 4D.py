@@ -3,6 +3,8 @@ import torch
 import tntorch as tn
 from scipy.stats import multivariate_normal
 
+def gaussian(x):
+    return 1/ (((2 * np.pi) ** (num_dimensions) * np.abs(np.linalg.det(cov_matrix))) ** 0.5) * np.exp(-0.5 * ((x-mu).T @ np.linalg.inv(cov_matrix) @ (x-mu)))
 
 num_dimensions = 4
 mu = np.array([0.10, 0.10, 0.23, 0.17])  # Mean vector
@@ -20,7 +22,7 @@ for x in np.linspace(mu[0] - 3*np.sqrt(cov_matrix[0,0]), mu[0] + 3*np.sqrt(cov_m
     for y in np.linspace(mu[1] - 3*np.sqrt(cov_matrix[1,1]), mu[1] + 3*np.sqrt(cov_matrix[1,1]), 2**d):
         for z in np.linspace(mu[2] - 3*np.sqrt(cov_matrix[2,2]), mu[2] + 3*np.sqrt(cov_matrix[2,2]), 2**d):
             for w in np.linspace(mu[3] - 3*np.sqrt(cov_matrix[3,3]), mu[3] + 3*np.sqrt(cov_matrix[3,3]), 2**d):
-                vectroized_function.append(gaussian(np.array([x,y])))
+                vectroized_function.append(gaussian(np.array([x,y,z,w])))
                 
 vectroized_function = np.array(vectroized_function) # vettore probabilità discreta
 
