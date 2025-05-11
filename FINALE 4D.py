@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import tntorch as tn
-from qiiskit import QuantumCircuit, transpile
+from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
@@ -114,7 +114,7 @@ for idx, (U_list, qubits) in enumerate(W):
 
 #PARAMETRI CIRCUITO
 
-n_qubits = 10
+n_qubits = 12
 W = W[::-1]
 gates =W
 
