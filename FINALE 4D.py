@@ -162,7 +162,7 @@ simulator = AerSimulator()
 compiled = transpile(qc, simulator)
 
 # Esegui la simulazione
-job = simulator.run(compiled, shots=10024)
+job = simulator.run(compiled, shots=50024)
 result = job.result()
 
 # Risultati
