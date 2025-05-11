@@ -20,7 +20,7 @@ cov_matrix = np.array([[0.20, 0.35],[ 0.16, 0.07]])  # Covariance matrix
 def gaussian(x):
     return 1/ (((2 * np.pi) ** (num_dimensions) * np.abs(np.linalg.det(cov_matrix))) ** 0.5) * np.exp(-0.5 * ((x-mu).T @ np.linalg.inv(cov_matrix) @ (x-mu)))
 
-d=10
+d=5
 
 vectroized_function = [] #vettore vuoto
 for x in np.linspace(mu[0] - 3*np.sqrt(cov_matrix[0,0]), mu[0] + 3*np.sqrt(cov_matrix[0,0]), 2**d):
@@ -110,7 +110,7 @@ for idx, (U_list, qubits) in enumerate(W):
 
 #PARAMETRI CIRCUITO
 
-n_qubits = 20
+n_qubits = 10
 W = W[::-1]
 gates =W
 
