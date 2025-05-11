@@ -17,7 +17,7 @@ cov_matrix = np.array([[0.20, 0.35, 0.12, 0.23],[0.10, 0.28, 0.19, 0.13],[0.10, 
 cov_matrix = 0.5 * (cov_matrix + cov_matrix.T)  
 cov_matrix = cov_matrix @ cov_matrix
 
-#Rescaking the variance to make the pattern recongnizable
+#Rescaling the variance to make the pattern recongnizable
 scale = 50
 cov_matrix = scale * cov_matrix
 cov_matrix_inv = np.linalg.inv(cov_matrix)
