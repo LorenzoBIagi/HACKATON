@@ -60,7 +60,7 @@ T=tn.Tensor(A)      #tensore torch
 TTrain = tn.cross(
     function=lambda x: x,   # identità su ciascuna fibra
     tensors=[T],            # lista di un solo tensore               # tolleranza desiderata
-    rmax=16,                 # rank massimo ammesso
+    ranks_tt=16,                 # rank massimo ammesso
 )
 
 
@@ -156,7 +156,7 @@ simulator = AerSimulator()
 compiled = transpile(qc, simulator)
 
 # Esegui la simulazione
-job = simulator.run(compiled, shots=10024)
+job = simulator.run(compiled, shots=50024)
 result = job.result()
 
 # Risultati
