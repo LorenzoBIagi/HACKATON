@@ -15,7 +15,8 @@ from qiskit.circuit.library import UnitaryGate
 num_dimensions = 2
 mu = np.array([0.10, 0.10])  # Mean vector
 cov_matrix = np.array([[0.20, 0.35],[ 0.16, 0.07]])  # Covariance matrix 
-
+cov_matrix = 0.5 * (cov_matrix + cov_matrix.T)  
+cov_matrix = cov_matrix @ cov_matrix
 
 def gaussian(x):
     return 1/ (((2 * np.pi) ** (num_dimensions) * np.abs(np.linalg.det(cov_matrix))) ** 0.5) * np.exp(-0.5 * ((x-mu).T @ np.linalg.inv(cov_matrix) @ (x-mu)))
