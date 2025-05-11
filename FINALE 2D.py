@@ -27,6 +27,28 @@ for x in np.linspace(mu[0] - 3*np.sqrt(cov_matrix[0,0]), mu[0] + 3*np.sqrt(cov_m
     for y in np.linspace(mu[1] - 3*np.sqrt(cov_matrix[1,1]), mu[1] + 3*np.sqrt(cov_matrix[1,1]), 2**d):
         vectroized_function.append(gaussian(np.array([x,y])))
 
+N = 2**(2*d)
+
+# Reconstruiamo asse X completo e vettore Y con zero quando mancante
+xs = list(range(N))
+ys = vectroized_function
+
+# Bin into 100 columns
+num_bins = 100
+binned_sums = np.add.reduceat(ys, np.linspace(0, N, num_bins+1, dtype=int)[:-1])
+
+# X-axis as bin indices
+xs_binned = np.arange(num_bins)
+
+# Plot histogram with 100 bars
+plt.figure(figsize=(12, 4))
+plt.bar(xs_binned, binned_sums, width=1.0)
+plt.ylabel('Summed Probability')
+plt.xlabel('Bin')
+plt.title('Histogram with 100 Bins')
+plt.show()
+
+
 vectroized_function = np.array(vectroized_function) # vettore probabilità discreta
 
 shape = (2,)*(d*num_dimensions)         # (2,2,2,2)
@@ -150,13 +172,17 @@ xs = list(range(N))
 ys = [counts_dec.get(x, 0) for x in xs]
 
 # Plotta con matplotlib “puro”
+# Bin into 100 columns
+num_bins = 100
+binned_sums = np.add.reduceat(ys, np.linspace(0, N, num_bins+1, dtype=int)[:-1])
+
+# X-axis as bin indices
+xs_binned = np.arange(num_bins)
+
+# Plot histogram with 100 bars
 plt.figure(figsize=(12, 4))
-plt.bar(xs, ys, width=1.0)
-
-# Togli le tacche e le label sull’asse x
-#plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
-
-plt.ylabel('Counts')
-plt.xlabel('Stato (decimale)')
-plt.title('Istogramma dei risultati')
+plt.bar(xs_binned, binned_sums, width=1.0)
+plt.ylabel('Summed Probability')
+plt.xlabel('Bin')
+plt.title('Histogram with 100 Bins')
 plt.show()
