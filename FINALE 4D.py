@@ -8,7 +8,9 @@ import matplotlib.pyplot as plt
 from qiskit.circuit.library import UnitaryGate
 
 %matplotlib inline
-num_dimensions = 4
+
+#PARAMETERS OF GAUSSIAN DISTRIBUTION
+num_dimensions = 4 #FOUR DIMENSIONAL CASE
 mu = np.array([0.10, 0.10, 0.23, 0.17])  # Mean vector
 cov_matrix = np.array([[0.20, 0.35, 0.12, 0.23],[0.10, 0.28, 0.19, 0.13],[0.10, 0.20, 0.10, 0.10],[0.19, 0.03, 0.07, 0.27]])  # Covariance matrix 
 cov_matrix = 0.5 * (cov_matrix + cov_matrix.T)  
