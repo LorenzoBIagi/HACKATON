@@ -46,15 +46,19 @@ N = 2**d
 xs = list(range(N))
 ys = vectroized_function
 
+# Bin into 100 columns
+num_bins = 100
+binned_sums = np.add.reduceat(ys, np.linspace(0, N, num_bins+1, dtype=int)[:-1])
+
+# X-axis as bin indices
+xs_binned = np.arange(num_bins)
+
+# Plot histogram with 100 bars
 plt.figure(figsize=(12, 4))
-plt.bar(xs, ys, width=1.0)
-
-# Togli le tacche e le label sull’asse x
-#plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
-
-plt.ylabel('Counts')
-plt.xlabel('Stato (decimale)')
-plt.title('Istogramma dei risultati')
+plt.bar(xs_binned, binned_sums, width=1.0)
+plt.ylabel('Summed Probability')
+plt.xlabel('Bin')
+plt.title('Histogram with 100 Bins')
 plt.show()
 
 vectroized_function = np.array(vectroized_function) # vettore probabilità discreta
