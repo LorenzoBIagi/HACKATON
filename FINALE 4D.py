@@ -152,36 +152,14 @@ N = 2**n
 # Reconstruiamo asse X completo e vettore Y con zero quando mancante
 xs = list(range(N))
 ys = [counts_dec.get(x, 0) for x in xs]
-xs = np.reshape(xs, (2**(d),2**(d)))
-ys = np.reshape(ys, (2**(d),2**(d)))
-from mpl_toolkits.mplot3d import Axes3D  # abilita il 3D
-
-fig = plt.figure(figsize=(8,6))
-ax = fig.add_subplot(111, projection='3d')
-
-# Surface plot
-ax.plot_surface(
-    xs[0],            # asse X: indice di riga
-    xs[1],            # asse Y: indice di colonna
-    ys,           # asse Z: counts
-    rstride=1,
-    cstride=1,
-    edgecolor='none',
-    cmap='viridis'
-)
-ax.set_title('Istogramma 3D delle counts')
-
-plt.show()
-
-# Plotta con matplotlib “puro”
-#plt.figure(figsize=(12, 4))
-#plt.bar(xs, ys, width=1.0)
+print(sum(ys))# Plotta con matplotlib “puro”
+plt.figure(figsize=(12, 4))
+plt.bar(xs, ys, width=1.0)
 
 # Togli le tacche e le label sull’asse x
 #plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
 
-#plt.ylabel('Counts')
-#plt.xlabel('Stato (decimale)')
-#plt.title('Istogramma dei risultati')
-#plt.show()
-
+plt.ylabel('Counts')
+plt.xlabel('Stato (decimale)')
+plt.title('Istogramma dei risultati')
+plt.show()

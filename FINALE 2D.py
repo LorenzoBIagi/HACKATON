@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import tntorch as tn
-from qiiskit import QuantumCircuit, transpile
+from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
