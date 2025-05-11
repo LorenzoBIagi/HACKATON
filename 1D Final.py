@@ -36,7 +36,7 @@ plt.figure(figsize=(12, 4))
 plt.bar(xs, ys, width=1.0)
 plt.ylabel('Counts')
 plt.xlabel('State (decimal)')
-plt.title('Probability distribution')
+plt.title('Probability distribution (1D)')
 plt.show()
 
 
@@ -45,7 +45,7 @@ plt.show()
 vec =  np.array(vec)    # Discrete probability vector
 
 shape = (2,)*d         # (2,2,2,2,..,2)
-A = vec.reshape(shape) #tensor nump reshapedy
+A = vec.reshape(shape) #tensor nump reshaped
 T=tn.Tensor(A)      #tensor torch
 
 
@@ -95,16 +95,13 @@ for k in range(len(cores)):
     R = S_prime @ V
     
     
-    print("R prima",R.shape)
     tronc = int(min(2**(min(k+1, int(np.log2(nk[k])+1))),nk[k+1]))
     R = R[:tronc, :]
     
-    print("R  dopo",R.shape)
-
     if k != len(cores) - 1:
         cores[k+1] = np.tensordot(R, cores[k+1],axes=([-1], [0]))
 
-    # qubit aciton
+    # qubit action
     start = k + 1
     mn    = min(start, int(np.log2(nk[k])))
     diff  = int(start - mn)
@@ -156,6 +153,6 @@ plt.bar(xs, ys, width=1.0)
 
 
 plt.ylabel('Counts')
-plt.xlabel('StatE (decimal)')
-plt.title('Tensor Network Representation')
+plt.xlabel('State (decimal)')
+plt.title('Tensor Network Representation (1D)')
 plt.show()

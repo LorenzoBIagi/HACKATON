@@ -10,27 +10,30 @@ from qiskit.circuit.library import UnitaryGate
 %matplotlib inline
 
 
-#PARAMETRI GAUSSIANA
-
-num_dimensions = 2
+#PARAMETERS OF GAUSSIAN DISTRIBUTION
+num_dimensions = 2 #TWO DIMENSIONAL CASE
 mu = np.array([0.10, 0.10])  # Mean vector
 cov_matrix = np.array([[0.20, 0.35],[ 0.16, 0.07]])  # Covariance matrix 
+#Make it positive semidefinite
 cov_matrix = 0.5 * (cov_matrix + cov_matrix.T)  
 cov_matrix = cov_matrix @ cov_matrix
-print(cov_matrix)
 def gaussian(x):
     return 1/ (((2 * np.pi) ** (num_dimensions) * np.abs(np.linalg.det(cov_matrix))) ** 0.5) * np.exp(-0.5 * ((x-mu).T @ np.linalg.inv(cov_matrix) @ (x-mu)))
 
-d=5
+#DISCRETIZATION PARAMETERS
+q=10 #qubits
+d=q/num_dimensions #samples in each direction (MUST BE MULTIPLE)
+N = 2**(2*d) 
 
-vectroized_function = [] #vettore vuoto
+# DISCRETIZATION
+vectroized_function = [] 
+
 for x in np.linspace(mu[0] - 3*np.sqrt(cov_matrix[0,0]), mu[0] + 3*np.sqrt(cov_matrix[0,0]), 2**d):
     for y in np.linspace(mu[1] - 3*np.sqrt(cov_matrix[1,1]), mu[1] + 3*np.sqrt(cov_matrix[1,1]), 2**d):
         vectroized_function.append(gaussian(np.array([x,y])))
 
-N = 2**(2*d)
 
-# Reconstruiamo asse X completo e vettore Y con zero quando mancante
+
 xs = list(range(N))
 ys = vectroized_function
 
@@ -41,35 +44,39 @@ binned_sums = np.add.reduceat(ys, np.linspace(0, N, num_bins+1, dtype=int)[:-1])
 # X-axis as bin indices
 xs_binned = np.arange(num_bins)
 
-# Plot histogram with 100 bars
+# PLOT OF DISTRIBUTION
 plt.figure(figsize=(12, 4))
 plt.bar(xs_binned, binned_sums, width=1.0)
 plt.ylabel('Summed Probability')
 plt.xlabel('Bin')
-plt.title('Histogram with 100 Bins')
+plt.title('Probability distribution (2D)')
 plt.show()
 
 
-vectroized_function = np.array(vectroized_function) # vettore probabilità discreta
+vectroized_function = np.array(vectroized_function) 
+shape = (2,)*(d*num_dimensions)         # (2,2,...,2,2)
+A = vectroized_function.reshape(shape) #tensor nump reshaped
+T=tn.Tensor(A)      #tensor torch
 
-shape = (2,)*(d*num_dimensions)         # (2,2,2,2)
-A = vectroized_function.reshape(shape) #tensore numpy
-T=tn.Tensor(A)      #tensore torch
-
+#TENSOR TRAIN WITH TT-CROSS
 
 TTrain = tn.cross(
-    function=lambda x: x,   # identità su ciascuna fibra
-    tensors=[T],            # lista di un solo tensore               # tolleranza desiderata
-    ranks_tt=16,                 # rank massimo ammesso
+    function=lambda x: x,   
+    tensors=[T],                          
+    ranks_tt=16,                 # Forcing maximum virtual dimension (Increased to better see the pattern in the plot)
 )
 
 
 print(TTrain)
 
 
+#FROM TENSOR TRAIN TO CIRCUIT
+#Cores counting
 
 cores_torch = TTrain.cores
 cores = [c.cpu().numpy() for c in cores_torch]
+
+#IMPLEMENTATION ALGORITHM FROM PAPER
 
 W = []
 nk = []
@@ -83,41 +90,32 @@ for k in range(len(cores)):
     j, i, n_k = cores[k].shape
     lk=np.log2(nk[k])
 
-    print("run :",k)
-    print("nk",nk[k])
-    print("lk",lk)
+    
 
 
-    print("core prima",cores[k].shape)
+    
     cores[k] = np.reshape(cores[k], (j * i, n_k))
 
-    print("core dopo",cores[k].shape)
+    
     U, S, V = np.linalg.svd(cores[k])
-    print("SVD")
-    print("U : ",U.shape)
-    print("S Array : ", S.shape)
-    print("V : ", V.shape)
+    
 
     S_prime = np.zeros_like(cores[k])
     for i in range(len(S)):
         S_prime[i,i] = S[i]
-    
-
-    print("S Dopo : ", S_prime.shape)
-
     R = S_prime @ V
     
     
-    print("R prima",R.shape)
+    
     tronc = int(min(2**(min(k+1, int(np.log2(nk[k])+1))),nk[k+1]))
     R = R[:tronc, :]
     
-    print("R  dopo",R.shape)
+    
 
     if k != len(cores) - 1:
         cores[k+1] = np.tensordot(R, cores[k+1],axes=([-1], [0]))
 
-    # calcolo dei qubit coinvolti
+    # qubit aciton
     start = k + 1
     mn    = min(start, int(np.log2(nk[k])))
     diff  = int(start - mn)
@@ -126,18 +124,18 @@ for k in range(len(cores)):
     U_list = U.tolist()
     W.append([U_list, qubits])
 
-# Stampa di controllo
+# Control printing
 for idx, (U_list, qubits) in enumerate(W):
     print(f"Unitary {idx}: acts on qubits {qubits}, matrix with dimension {len(U_list)}")
 
 
-#PARAMETRI CIRCUITO
+#CIRCUIT PARAMETERS
 
 n_qubits = 10
 W = W[::-1]
 gates =W
 
-# Crea il circuito
+# CIRCUIT CREATION
 qc = QuantumCircuit(n_qubits,n_qubits)
 
 
@@ -149,41 +147,36 @@ for gate in gates:
 qc.measure(range(n_qubits)[::-1], range(n_qubits))
 
 
-# Simulatore
+# Simulation
 simulator = AerSimulator()
-
-# Transpile per il simulatore
 compiled = transpile(qc, simulator)
-
-# Esegui la simulazione
 job = simulator.run(compiled, shots=50024)
 result = job.result()
 
-# Risultati
+# Results
 qc.draw('mpl')
 counts_bin = result.get_counts()
-# Converte le chiavi binarie in decimali
+
+# bin to dec conversion
 counts_dec = {int(bstr, 2): cnt for bstr, cnt in counts_bin.items()}
 
 n = qc.num_qubits
 N = 2**n
 
-# Reconstruiamo asse X completo e vettore Y con zero quando mancante
+
 xs = list(range(N))
 ys = [counts_dec.get(x, 0) for x in xs]
 
-# Plotta con matplotlib “puro”
-# Bin into 100 columns
 num_bins = 100
 binned_sums = np.add.reduceat(ys, np.linspace(0, N, num_bins+1, dtype=int)[:-1])
 
 # X-axis as bin indices
 xs_binned = np.arange(num_bins)
 
-# Plot histogram with 100 bars
+# TENSOR NETWORK PLOT
 plt.figure(figsize=(12, 4))
 plt.bar(xs_binned, binned_sums, width=1.0)
-plt.ylabel('Summed Probability')
-plt.xlabel('Bin')
-plt.title('Histogram with 100 Bins')
+plt.ylabel('Counts')
+plt.xlabel('State (decimal)')
+plt.title('Tensor Network Representation (2D)')
 plt.show()
