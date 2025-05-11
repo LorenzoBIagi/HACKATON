@@ -24,7 +24,6 @@ shape = (2,)*(d*num_dimensions)         # (2,2,2,2)
 A = vectroized_function.reshape(shape) #tensore numpy
 T=tn.Tensor(A)      #tensore torch
 
-print(shape)
 
 TTrain = tn.cross(
     function=lambda x: x,   # identità su ciascuna fibra
@@ -34,4 +33,3 @@ TTrain = tn.cross(
 
 
 print(TTrain)
-print(A[0,0,1,1]) 
