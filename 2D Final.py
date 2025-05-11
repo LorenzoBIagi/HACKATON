@@ -67,7 +67,7 @@ T=tn.Tensor(A)                          #tensor torch
 TTrain = tn.cross(
     function=lambda x: x,   
     tensors=[T],                          
-    ranks_tt=16,                 # Forcing maximum virtual dimension (Increased to better see the pattern in the plot)
+    ranks_tt=32,                 # Forcing maximum virtual dimension (Increased to better see the pattern in the plot)
 )
 
 
