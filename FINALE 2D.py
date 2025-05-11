@@ -146,10 +146,12 @@ n = qc.num_qubits
 N = 2**n
 
 # Reconstruiamo asse X completo e vettore Y con zero quando mancante
-xs = list(range(N))
-ys = [counts_dec.get(x, 0) for x in xs]
-xs = np.reshape(xs, (2**(d),2**(d)))
-ys = np.reshape(ys, (2**(d),2**(d)))
+xs0 = list(range(N//2))
+xs1 = list(range(N//2, N))
+ys0 = [counts_dec.get(x, 0) for x in xs0]
+ys1 = [counts_dec.get(x, 0) for x in xs1]
+xs = np.array([xs0, xs1]) # asse X: indice di riga
+ys = np.array([ys0, ys1]) # asse Y: counts
 from mpl_toolkits.mplot3d import Axes3D  # abilita il 3D
 
 fig = plt.figure(figsize=(8,6))
@@ -157,8 +159,8 @@ ax = fig.add_subplot(111, projection='3d')
 
 # Surface plot
 ax.plot_surface(
-    xs[0],            # asse X: indice di riga
-    xs[1],            # asse Y: indice di colonna
+    xs0,            # asse X: indice di riga
+    xs1,            # asse Y: indice di colonna
     ys,           # asse Z: counts
     rstride=1,
     cstride=1,

@@ -72,7 +72,7 @@ T=tn.Tensor(A)      #tensore torch
 TTrain = tn.cross(
     function=lambda x: x,   # identità su ciascuna fibra
     tensors=[T],            # lista di un solo tensore               # tolleranza desiderata
-    ranks_tt=8,                 # rank massimo ammesso
+    ranks_tt=30,                 # rank massimo ammesso
 )
 
 
