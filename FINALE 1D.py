@@ -10,18 +10,17 @@ from qiskit.circuit.library import UnitaryGate
 %matplotlib inline
 
 
-#PARAMETRI GAUSSIANA
-
-num_dimensions = 1
+#PARAMETERS OF GAUSSIAN DISTRIBUTION
+num_dimensions = 1 #ONE DIMENSIONAL CASE
 mu = 0.10   # Mean vector
 cov_matrix = 0.20  # Covariance matrix 
 
-#PARAMETRI DISCRETIZZAZIOINE
+#DISCRETIZATION PARAMETERS
 
-d = 10                 # qubit
-m = 2**d               # dimensioni discretizzazione
+d = 10                 # qubit dimensions
+m = 2**d               # "physical" dimensions
 
-#GAUSSIANA DISCRETA
+#DISCRETIZATION
 
 domain_np = np.linspace(mu - 3*np.sqrt(cov_matrix), mu + 3*np.sqrt(cov_matrix), m)
 def gaussian(x):
@@ -32,31 +31,30 @@ vec = [gaussian(x) for x in domain_np]
 xs = list(range(m))
 ys = vec
 
-# Plotta con matplotlib “puro”
+# PLOT OF DISTRIBUTION
 plt.figure(figsize=(12, 4))
 plt.bar(xs, ys, width=1.0)
-
-# Togli le tacche e le label sull’asse x
-#plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
-
 plt.ylabel('Counts')
-plt.xlabel('Stato (decimale)')
-plt.title('Istogramma dei risultati')
+plt.xlabel('State (decimal)')
+plt.title('Probability distribution')
 plt.show()
 
-vec =  np.array(vec)    # vettore probabilità discreta
 
-shape = (2,)*d         # (2,2,2,2)
-A = vec.reshape(shape) #tensore numpy
-T=tn.Tensor(A)      #tensore torch
+#CONVERSION TO TENSOR NETWORK
+
+vec =  np.array(vec)    # Discrete probability vector
+
+shape = (2,)*d         # (2,2,2,2,..,2)
+A = vec.reshape(shape) #tensor nump reshapedy
+T=tn.Tensor(A)      #tensor torch
 
 
-#CREAZIONE TENSOR TRAIN
+#TENSOR TRAIN WITH TT-CROSS
 
 TTrain = tn.cross(
-    function=lambda x: x,   # identità su ciascuna fibra
-    tensors=[T],            # lista di un solo tensore               # tolleranza desiderata
-    ranks_tt=8,                 # rank massimo ammesso
+    function=lambda x: x,   
+    tensors=[T],            
+    ranks_tt=8,           # Forcing maximum virtual dimension
 )
 
 
@@ -64,8 +62,13 @@ TTrain = tn.cross(
 print(TTrain)
 
 
+#FROM TENSOR TRAIN TO CIRCUIT
+#Cores counting
+
 cores_torch = TTrain.cores
 cores = [c.cpu().numpy() for c in cores_torch]
+
+#IMPLEMENTATION ALGORITHM FROM PAPER
 
 W = []
 nk = []
@@ -78,28 +81,16 @@ for k in range(len(cores)):
     # reshape & SVD 
     j, i, n_k = cores[k].shape
     lk=np.log2(nk[k])
-
-    print("run :",k)
-    print("nk",nk[k])
-    print("lk",lk)
-
-
-    print("core prima",cores[k].shape)
     cores[k] = np.reshape(cores[k], (j * i, n_k))
 
-    print("core dopo",cores[k].shape)
+    
     U, S, V = np.linalg.svd(cores[k])
-    print("SVD")
-    print("U : ",U.shape)
-    print("S Array : ", S.shape)
-    print("V : ", V.shape)
+    
 
     S_prime = np.zeros_like(cores[k])
     for i in range(len(S)):
         S_prime[i,i] = S[i]
     
-
-    print("S Dopo : ", S_prime.shape)
 
     R = S_prime @ V
     
@@ -113,7 +104,7 @@ for k in range(len(cores)):
     if k != len(cores) - 1:
         cores[k+1] = np.tensordot(R, cores[k+1],axes=([-1], [0]))
 
-    # calcolo dei qubit coinvolti
+    # qubit aciton
     start = k + 1
     mn    = min(start, int(np.log2(nk[k])))
     diff  = int(start - mn)
@@ -122,60 +113,49 @@ for k in range(len(cores)):
     U_list = U.tolist()
     W.append([U_list, qubits])
 
-# Stampa di controllo
+# Control printing
 for idx, (U_list, qubits) in enumerate(W):
     print(f"Unitary {idx}: acts on qubits {qubits}, matrix with dimension {len(U_list)}")
 
 
-#PARAMETRI CIRCUITO
+#CIRCUIT PARAMETERS
 
 n_qubits = 10
 W = W[::-1]
 gates =W
 
-# Crea il circuito
+# CIRCUIT CREATION
 qc = QuantumCircuit(n_qubits,n_qubits)
-
 
 
 for gate in gates:
     qc.append(UnitaryGate(gate[0]), gate[1][::-1])
 
-
 qc.measure(range(n_qubits)[::-1], range(n_qubits))
-
-
-# Simulatore
 simulator = AerSimulator()
-
-# Transpile per il simulatore
 compiled = transpile(qc, simulator)
 
-# Esegui la simulazione
+# Simulation
 job = simulator.run(compiled, shots=57024)
 result = job.result()
 
-# Risultati
+# Results
 qc.draw('mpl')
 counts_bin = result.get_counts()
-# Converte le chiavi binarie in decimali
-counts_dec = {int(bstr, 2): cnt for bstr, cnt in counts_bin.items()}
 
+# bin to dec conversion
+counts_dec = {int(bstr, 2): cnt for bstr, cnt in counts_bin.items()}
 n = qc.num_qubits
 N = 2**n
-
-# Reconstruiamo asse X completo e vettore Y con zero quando mancante
 xs = list(range(N))
 ys = [counts_dec.get(x, 0) for x in xs]
 
-# Plotta con matplotlib “puro”
+# TENSOR NETWORK PLOT
 plt.figure(figsize=(12, 4))
 plt.bar(xs, ys, width=1.0)
 
-# Togli le tacche e le label sull’asse x
-#plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
 
 plt.ylabel('Counts')
-plt.xlabel('Stato (decimale)')
-plt.title('Istogramma dei risultati')
+plt.xlabel('StatE (decimal)')
+plt.title('Tensor Network Representation')
 plt.show()
