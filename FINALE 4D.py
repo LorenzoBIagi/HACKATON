@@ -3,12 +3,16 @@ import torch
 import tntorch as tn
 from scipy.stats import multivariate_normal
 
-def gaussian(x):
-    return 1/ (((2 * np.pi) ** (num_dimensions) * np.abs(np.linalg.det(cov_matrix))) ** 0.5) * np.exp(-0.5 * ((x-mu).T @ np.linalg.inv(cov_matrix) @ (x-mu)))
-
 num_dimensions = 4
 mu = np.array([0.10, 0.10, 0.23, 0.17])  # Mean vector
 cov_matrix = np.array([[0.20, 0.35, 0.12, 0.23],[0.10, 0.28, 0.19, 0.13],[0.10, 0.20, 0.10, 0.10],[0.19, 0.03, 0.07, 0.27]])  # Covariance matrix 
+cov_matrix_inv = np.linalg.inv(cov_matrix)
+
+
+det = np.linalg.det(cov_matrix)
+def gaussian(x):
+    return 1/ (((2 * np.pi) ** (num_dimensions) * np.abs(det)) ** 0.5) * np.exp(-0.5 * ((x-mu).T @ cov_matrix_inv @ (x-mu)))
+
 
 #PARAMETRI DISCRETIZZAZIOINE
 
