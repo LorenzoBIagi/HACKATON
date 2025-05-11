@@ -27,9 +27,24 @@ domain_np = np.linspace(mu - 3*np.sqrt(cov_matrix), mu + 3*np.sqrt(cov_matrix), 
 def gaussian(x):
     return (1/(np.sqrt(2*np.pi*cov_matrix)))*np.exp(-0.5*((x-mu)**2)/np.sqrt(cov_matrix))
 
+vec = [gaussian(x) for x in domain_np]    
 
+xs = list(range(m))
+ys = vec
 
-vec =  np.array([gaussian(x) for x in domain_np])    # vettore probabilità discreta
+# Plotta con matplotlib “puro”
+plt.figure(figsize=(12, 4))
+plt.bar(xs, ys, width=1.0)
+
+# Togli le tacche e le label sull’asse x
+#plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+
+plt.ylabel('Counts')
+plt.xlabel('Stato (decimale)')
+plt.title('Istogramma dei risultati')
+plt.show()
+
+vec =  np.array(vec)    # vettore probabilità discreta
 
 shape = (2,)*d         # (2,2,2,2)
 A = vec.reshape(shape) #tensore numpy
