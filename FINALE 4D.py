@@ -11,6 +11,12 @@ from qiskit.circuit.library import UnitaryGate
 num_dimensions = 4
 mu = np.array([0.10, 0.10, 0.23, 0.17])  # Mean vector
 cov_matrix = np.array([[0.20, 0.35, 0.12, 0.23],[0.10, 0.28, 0.19, 0.13],[0.10, 0.20, 0.10, 0.10],[0.19, 0.03, 0.07, 0.27]])  # Covariance matrix 
+cov_matrix = 0.5 * (cov_matrix + cov_matrix.T)  
+cov_matrix = cov_matrix @ cov_matrix
+
+scale = 50
+cov_matrix = scale * cov_matrix
+
 cov_matrix_inv = np.linalg.inv(cov_matrix)
 
 
@@ -27,13 +33,32 @@ m = 2**(d//4)               # dimensioni discretizzazione
 print(m)
 
 vectroized_function = []
-for x in np.linspace(mu[0] - 3*np.sqrt(cov_matrix[0,0]), mu[0] + 3*np.sqrt(cov_matrix[0,0]), m):
-    for y in np.linspace(mu[1] - 3*np.sqrt(cov_matrix[1,1]), mu[1] + 3*np.sqrt(cov_matrix[1,1]), m):
-        for z in np.linspace(mu[2] - 3*np.sqrt(cov_matrix[2,2]), mu[2] + 3*np.sqrt(cov_matrix[2,2]), m):
-            for w in np.linspace(mu[3] - 3*np.sqrt(cov_matrix[3,3]), mu[3] + 3*np.sqrt(cov_matrix[3,3]), m):
+for x in np.linspace(mu[0] - np.sqrt(cov_matrix[0,0]), mu[0] + np.sqrt(cov_matrix[0,0]), m):
+    for y in np.linspace(mu[1] - np.sqrt(cov_matrix[1,1]), mu[1] + np.sqrt(cov_matrix[1,1]), m):
+        for z in np.linspace(mu[2] - np.sqrt(cov_matrix[2,2]), mu[2] + np.sqrt(cov_matrix[2,2]), m):
+            for w in np.linspace(mu[3] - np.sqrt(cov_matrix[3,3]), mu[3] + np.sqrt(cov_matrix[3,3]), m):
                 vectroized_function.append(gaussian(np.array([x,y,z,w])))
                 
+
+N = 2**d
+
+# Reconstruiamo asse X completo e vettore Y con zero quando mancante
+xs = list(range(N))
+ys = vectroized_function
+
+plt.figure(figsize=(12, 4))
+plt.bar(xs, ys, width=1.0)
+
+# Togli le tacche e le label sull’asse x
+#plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+
+plt.ylabel('Counts')
+plt.xlabel('Stato (decimale)')
+plt.title('Istogramma dei risultati')
+plt.show()
+
 vectroized_function = np.array(vectroized_function) # vettore probabilità discreta
+
 
 shape = (2,)*d         # (2,2,2,2)
 A = vectroized_function.reshape(shape) #tensore numpy
@@ -153,13 +178,18 @@ N = 2**n
 xs = list(range(N))
 ys = [counts_dec.get(x, 0) for x in xs]
 print(sum(ys))# Plotta con matplotlib “puro”
+
+# Bin into 100 columns
+num_bins = 100
+binned_sums = np.add.reduceat(ys, np.linspace(0, N, num_bins+1, dtype=int)[:-1])
+
+# X-axis as bin indices
+xs_binned = np.arange(num_bins)
+
+# Plot histogram with 100 bars
 plt.figure(figsize=(12, 4))
-plt.bar(xs, ys, width=1.0)
-
-# Togli le tacche e le label sull’asse x
-#plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
-
-plt.ylabel('Counts')
-plt.xlabel('Stato (decimale)')
-plt.title('Istogramma dei risultati')
+plt.bar(xs_binned, binned_sums, width=1.0)
+plt.ylabel('Summed Probability')
+plt.xlabel('Bin')
+plt.title('Histogram with 100 Bins')
 plt.show()
