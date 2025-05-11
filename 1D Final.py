@@ -44,9 +44,12 @@ plt.show()
 
 vec =  np.array(vec)    # Discrete probability vector
 
-shape = (2,)*d         # (2,2,2,2,..,2)
-A = vec.reshape(shape) #tensor nump reshaped
-T=tn.Tensor(A)      #tensor torch
+#RESHAPING
+
+
+shape = (2,)*d          #(2,2,2,2,..,2)
+A = vec.reshape(shape)  #tensor nump reshaped
+T=tn.Tensor(A)          #tensor torch
 
 
 #TENSOR TRAIN WITH TT-CROSS

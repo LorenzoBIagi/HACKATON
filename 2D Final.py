@@ -52,11 +52,15 @@ plt.xlabel('Bin')
 plt.title('Probability distribution (2D)')
 plt.show()
 
+#CONVERSION TO TENSOR NETWORK
 
 vectroized_function = np.array(vectroized_function) 
+
+#RESHAPING
+
 shape = (2,)*(d*num_dimensions)         # (2,2,...,2,2)
-A = vectroized_function.reshape(shape) #tensor nump reshaped
-T=tn.Tensor(A)      #tensor torch
+A = vectroized_function.reshape(shape)  #tensor nump reshaped
+T=tn.Tensor(A)                          #tensor torch
 
 #TENSOR TRAIN WITH TT-CROSS
 
@@ -115,7 +119,7 @@ for k in range(len(cores)):
     if k != len(cores) - 1:
         cores[k+1] = np.tensordot(R, cores[k+1],axes=([-1], [0]))
 
-    # qubit aciton
+    # qubit action
     start = k + 1
     mn    = min(start, int(np.log2(nk[k])))
     diff  = int(start - mn)
