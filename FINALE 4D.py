@@ -13,7 +13,7 @@ cov_matrix = np.array([[0.20, 0.35, 0.12, 0.23],[0.10, 0.28, 0.19, 0.13],[0.10, 
 #PARAMETRI DISCRETIZZAZIOINE
 
 d = 12                # qubit
-m = 2**(d/4)               # dimensioni discretizzazione
+m = 2**(d//4)               # dimensioni discretizzazione
 
 
 
