@@ -72,8 +72,8 @@ def create_generator() -> TorchConnector:
         sparse=False,
     )
 
-    np.random.seed(42)  # Imposta il seme per risultati riproducibili
-    num_parameters = qc.num_parameters  # Sostituisci con qc.num_parameters
+    np.random.seed(42)  
+    num_parameters = qc.num_parameters  
     initial_weights = np.random.random(num_parameters)
     return TorchConnector(qnn, initial_weights)
     
