@@ -15,7 +15,7 @@ cov_matrix = np.array([[0.20, 0.35, 0.12, 0.23],[0.10, 0.28, 0.19, 0.13],[0.10, 
 d = 12                # qubit
 m = 2**(d//4)               # dimensioni discretizzazione
 
-
+print(m)
 
 vectroized_function = []
 for x in np.linspace(mu[0] - 3*np.sqrt(cov_matrix[0,0]), mu[0] + 3*np.sqrt(cov_matrix[0,0]), 2**m):
