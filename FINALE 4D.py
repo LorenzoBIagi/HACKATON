@@ -14,8 +14,6 @@ cov_matrix = np.array([[0.20, 0.35, 0.12, 0.23],[0.10, 0.28, 0.19, 0.13],[0.10, 
 cov_matrix = 0.5 * (cov_matrix + cov_matrix.T)  
 cov_matrix = cov_matrix @ cov_matrix
 
-scale = 50
-cov_matrix = scale * cov_matrix
 
 cov_matrix_inv = np.linalg.inv(cov_matrix)
 
@@ -33,10 +31,10 @@ m = 2**(d//4)               # dimensioni discretizzazione
 print(m)
 
 vectroized_function = []
-for x in np.linspace(mu[0] - np.sqrt(cov_matrix[0,0]), mu[0] + np.sqrt(cov_matrix[0,0]), m):
-    for y in np.linspace(mu[1] - np.sqrt(cov_matrix[1,1]), mu[1] + np.sqrt(cov_matrix[1,1]), m):
-        for z in np.linspace(mu[2] - np.sqrt(cov_matrix[2,2]), mu[2] + np.sqrt(cov_matrix[2,2]), m):
-            for w in np.linspace(mu[3] - np.sqrt(cov_matrix[3,3]), mu[3] + np.sqrt(cov_matrix[3,3]), m):
+for x in np.linspace(mu[0] - 3*np.sqrt(cov_matrix[0,0]), mu[0] + 3*np.sqrt(cov_matrix[0,0]), m):
+    for y in np.linspace(mu[1] - 3*np.sqrt(cov_matrix[1,1]), mu[1] + 3*np.sqrt(cov_matrix[1,1]), m):
+        for z in np.linspace(mu[2] - 3*np.sqrt(cov_matrix[2,2]), mu[2] + 3*np.sqrt(cov_matrix[2,2]), m):
+            for w in np.linspace(mu[3] - 3*np.sqrt(cov_matrix[3,3]), mu[3] + 3*np.sqrt(cov_matrix[3,3]), m):
                 vectroized_function.append(gaussian(np.array([x,y,z,w])))
                 
 
@@ -72,7 +70,7 @@ T=tn.Tensor(A)      #tensore torch
 TTrain = tn.cross(
     function=lambda x: x,   # identità su ciascuna fibra
     tensors=[T],            # lista di un solo tensore               # tolleranza desiderata
-    ranks_tt=64,                 # rank massimo ammesso
+    ranks_tt=32,                 # rank massimo ammesso
 )
 
 
@@ -166,7 +164,7 @@ simulator = AerSimulator()
 compiled = transpile(qc, simulator)
 
 # Esegui la simulazione
-job = simulator.run(compiled, shots=50024)
+job = simulator.run(compiled, shots=10024)
 result = job.result()
 
 # Risultati
@@ -182,7 +180,6 @@ N = 2**n
 xs = list(range(N))
 ys = [counts_dec.get(x, 0) for x in xs]
 print(sum(ys))# Plotta con matplotlib “puro”
-
 # Bin into 100 columns
 num_bins = 100
 binned_sums = np.add.reduceat(ys, np.linspace(0, N, num_bins+1, dtype=int)[:-1])
